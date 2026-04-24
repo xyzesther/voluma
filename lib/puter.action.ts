@@ -47,7 +47,7 @@ export const createProject = async ({ item } : CreateProjectParams) :
 
         const {
             sourcePath: _sourcePath,
-            renderPath: _renderPath,
+            renderedPath: _renderedPath,
             publicPath: _publicPath,
             ...rest
         } = item;
@@ -56,7 +56,7 @@ export const createProject = async ({ item } : CreateProjectParams) :
         const payload = {
             ...rest,
             sourceImage: resolvedSource,
-            renderImage: resolvedRender,
+            renderedImage: resolvedRender,
         }
 
         try {
