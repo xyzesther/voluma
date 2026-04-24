@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useOutletContext } from 'react-router';
 import { CheckCircle2, ImageIcon, UploadIcon } from 'lucide-react';
-import { PROGRESS_INTERVAL_MS, PROGRESS_INCREMENT, REDIRECT_DELAY_MS } from '../lib/constants';
+import { PROGRESS_INTERVAL_MS, PROGRESS_INCREMENT, REDIRECT_DELAY_MS, ALLOWED_MIME_TYPES, MAX_FILE_SIZE_BYTES } from '../lib/constants';
 
 interface UploadProps {
     onComplete?: (data: string) => void;
@@ -11,26 +11,61 @@ const Upload = ({ onComplete }: UploadProps) => {
     const [file, setFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [error, setError] = useState<string | null>(null);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const readerRef = useRef<FileReader | null>(null);
 
     const { isSignedIn } = useOutletContext<AuthContext>();
+
+    const clearTimers = useCallback(() => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    }, []);
+
+    const validateFile = (file: File): string | null => {
+        if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+            return "Invalid file type. Please upload a JPG or PNG image.";
+        }
+        if (file.size > MAX_FILE_SIZE_BYTES) {
+            return "File is too large. Maximum size is 50MB.";
+        }
+        return null;
+    };
 
     const processFile = useCallback((file: File) => {
         if (!isSignedIn) return;
 
+        setError(null);
         setFile(file);
         setProgress(0);
+        clearTimers();
 
         const reader = new FileReader();
-        reader.onload = ( ) => {
-            const base64Data = reader.result as string;
+        readerRef.current = reader;
 
-            const interval = setInterval(() => {
+        reader.onload = () => {
+            const result = reader.result;
+            if (typeof result !== "string") return;
+            
+            const base64Data = result;
+
+            intervalRef.current = setInterval(() => {
                 setProgress((prev) => {
                     const next = prev + PROGRESS_INCREMENT;
                     if (next >= 100) {
-                        clearInterval(interval);
-                        setTimeout(() => {
+                        if (intervalRef.current) clearInterval(intervalRef.current);
+                        intervalRef.current = null;
+                        
+                        timeoutRef.current = setTimeout(() => {
                             onComplete?.(base64Data);
+                            timeoutRef.current = null;
                         }, REDIRECT_DELAY_MS);
                         return 100;
                     }
@@ -38,10 +73,33 @@ const Upload = ({ onComplete }: UploadProps) => {
                 });
             }, PROGRESS_INTERVAL_MS);
         };
+
+        reader.onerror = () => {
+            clearTimers();
+            setFile(null);
+            setProgress(0);
+        };
+
+        reader.onabort = () => {
+            clearTimers();
+            setFile(null);
+            setProgress(0);
+        };
+
         reader.readAsDataURL(file);
-    }, [isSignedIn, onComplete]);
+    }, [isSignedIn, onComplete, clearTimers]);
+
+    React.useEffect(() => {
+        return () => {
+            clearTimers();
+            if (readerRef.current) {
+                readerRef.current.abort();
+            }
+        };
+    }, [clearTimers]);
 
     const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
         if (!isSignedIn) return;
         setIsDragging(true);
     };
@@ -57,7 +115,12 @@ const Upload = ({ onComplete }: UploadProps) => {
         if (!isSignedIn) return;
 
         const droppedFile = e.dataTransfer.files[0];
-        if (droppedFile && droppedFile.type.startsWith('image/')) {
+        if (droppedFile) {
+            const validationError = validateFile(droppedFile);
+            if (validationError) {
+                setError(validationError);
+                return;
+            }
             processFile(droppedFile);
         }
     };
@@ -67,6 +130,11 @@ const Upload = ({ onComplete }: UploadProps) => {
 
         const selectedFile = e.target.files?.[0];
         if (selectedFile) {
+            const validationError = validateFile(selectedFile);
+            if (validationError) {
+                setError(validationError);
+                return;
+            }
             processFile(selectedFile);
         }
     };
@@ -100,6 +168,7 @@ const Upload = ({ onComplete }: UploadProps) => {
                             )}
                         </p>
                         <p className="help">Maximum File Size: 50MB.</p>
+                        {error && <p className="error-message" style={{ color: '#ef4444', marginTop: '0.5rem', fontSize: '0.875rem' }}>{error}</p>}
                     </div>
                 </div>
             ) : (
