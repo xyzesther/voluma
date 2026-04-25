@@ -1,10 +1,10 @@
 import type { Route } from "./+types/home";
 import Navbar from "../../components/Navbar";
 import { ArrowRight, Clock, Layers, ArrowUpRight, Box } from 'lucide-react';
-import { Button } from "../../components/ui/button";
+import { Button } from "../../components/ui/Button";
 import Upload from "../../components/Upload";
 import { useNavigate } from "react-router";
-import { createProject, getProjects } from "../../lib/puter.action.ts";
+import { createProject, getProjects } from "../../lib/puter.action";
 import { useState, useRef, useEffect } from 'react';
 
 export function meta({}: Route.MetaArgs) {
@@ -122,7 +122,7 @@ export default function Home() {
 
 
                   <div className="projects-grid">
-                      {projects.map(({id, renderedImage, sourceImage,
+                      {projects.map(({id, name, renderedImage, sourceImage,
                       timestamp}) => (
                           <div key={id} className="project-card group" onClick={() => navigate(`/visualizer/${id}`)}>
                               <div className="preview">
