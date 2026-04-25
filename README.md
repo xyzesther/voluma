@@ -1,87 +1,86 @@
-# Welcome to React Router!
+# Voluma
 
-A modern, production-ready template for building full-stack React applications using React Router.
+An AI-powered architectural visualization tool that transforms 2D floor plans into photorealistic top-down 3D renders.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## What It Does
 
-## Features
+Upload a floor plan image and Voluma uses Google Gemini 2.5 Flash (via the Puter AI platform) to generate a clean, photorealistic top-down 3D render — preserving exact geometry, adding realistic materials, furniture, and lighting. The visualizer page shows a before/after comparison slider so you can inspect the transformation in detail.
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+## Tech Stack
+
+- **Framework**: React 19 + React Router v7 (SSR)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **AI**: Puter.js `puter.ai.txt2img` — Gemini 2.5 Flash image generation
+- **Auth & Storage**: Puter.js (sign-in, static hosting, Worker API)
+- **Image Comparison**: react-compare-slider
+
+## Routes
+
+| Route | Description |
+|---|---|
+| `/` | Landing page — upload a floor plan, view recent projects |
+| `/visualizer/:id` | Project viewer — rendered output, before/after slider, export |
 
 ## Getting Started
 
-### Installation
+### Prerequisites
 
-Install the dependencies:
+- A [Puter](https://puter.com) account (required for auth and storage)
+- A Puter Worker deployed to handle project persistence (see `.env.example`)
+
+### Installation
 
 ```bash
 npm install
 ```
 
-### Development
+### Environment
 
-Start the development server with HMR:
+Copy `.env.example` and fill in your Puter Worker URL:
+
+```bash
+cp .env.example .env.local
+```
+
+```env
+VITE_PUTER_WORKER_URL=https://your-puter-worker.puter.work
+```
+
+### Development
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+App runs at `http://localhost:5173`.
 
-## Building for Production
-
-Create a production build:
+### Production Build
 
 ```bash
 npm run build
+npm start
 ```
 
-## Deployment
+## Upload Constraints
 
-### Docker Deployment
+- **Accepted formats**: JPG, PNG, WebP
+- **Max file size**: 50MB
 
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
+## Project Structure
 
 ```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+app/
+  routes/
+    home.tsx          # Landing page + upload flow
+    visualizer.$id.tsx # Render viewer + export
+components/
+  Navbar.tsx
+  Upload.tsx          # Drag-and-drop upload with progress
+  ui/Button.tsx
+lib/
+  ai.action.ts        # Gemini image generation via Puter AI
+  puter.action.ts     # Project CRUD via Puter Workers
+  puter.hosting.ts    # Static image hosting via Puter
+  constants.ts        # Prompts, limits, timing constants
 ```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
