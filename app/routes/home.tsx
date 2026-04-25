@@ -134,7 +134,7 @@ export default function Home() {
 
                               <div className="card-body">
                                   <div>
-                                      <h3>{projects?.[id]?.name || `Residence ${id}`}</h3>
+                                      <h3>{name || `Residence ${id}`} </h3>
                                       <div className="meta">
                                           <Clock size={12}/>
                                           <span suppressHydrationWarning>{new Date(timestamp).toLocaleDateString()}</span>

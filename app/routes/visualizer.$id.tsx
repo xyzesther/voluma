@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate, useParams, useOutletContext, useLocation } from 'react-router';
 import { generate3DView } from '../../lib/ai.action';
 import { X, Box, Share2, Download, RefreshCcw } from 'lucide-react';
@@ -23,7 +23,7 @@ const VisualizerId = () => {
 
     const handleBack = () => navigate('/')
 
-    const runGeneration = async (item: DesignItem) => {
+    const runGeneration = useCallback(async (item: DesignItem) => {
         if (!id || !item.sourceImage) return;
 
         try {
@@ -55,7 +55,7 @@ const VisualizerId = () => {
             setIsProcessing(false);
         }
 
-    }
+    }, [id, userId]);
 
     useEffect(() => {
         let isMounted = true;
@@ -101,7 +101,7 @@ const VisualizerId = () => {
 
         hasInitialGenerated.current = true;
         void runGeneration(project);
-    }, [project, isProjectLoading]);
+    }, [project, isProjectLoading, runGeneration]);
 
     return (
         <div className="visualizer">
@@ -148,7 +148,7 @@ const VisualizerId = () => {
                             ) : (
                                 <div className="render-placeholder">
                                     {project?.sourceImage && (
-                                        <img src={project?.sourceImage} alt="Orginal"
+                                        <img src={project?.sourceImage} alt="Original"
                                         className="render-fallback" />
                                     )}
                                 </div>
