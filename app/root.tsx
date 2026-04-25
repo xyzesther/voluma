@@ -31,7 +31,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -85,7 +85,7 @@ export default function App() {
     return await refreshAuth();
   }
   return (
-      <main className="min-h-screen bg-background text-foreground relative z-10">
+      <main className="min-h-screen bg-background text-foreground relative z-10" suppressHydrationWarning>
         <Outlet
           context = {{
             ...authState,
@@ -93,7 +93,7 @@ export default function App() {
             signIn,
             signOut,
           }}
-        />;
+        />
       </main>
   )
 
