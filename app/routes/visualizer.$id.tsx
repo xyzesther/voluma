@@ -24,15 +24,34 @@ const VisualizerId = () => {
 
     const handleBack = () => navigate('/')
 
-    const handleExport = () => {
+    const handleExport = async () => {
         if (!currentImage) return;
 
-        const link = document.createElement('a');
-        link.href = currentImage;
-        link.download = `voluma-render-${id || 'design'}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        try {
+            const response = await fetch(currentImage);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `voluma-render-${id || 'design'}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up the object URL
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error exporting image:', error);
+            // Fallback to original method if fetch fails (e.g., CORS issues)
+            const link = document.createElement('a');
+            link.href = currentImage;
+            link.download = `voluma-rendered-${id || 'design'}.png`;
+            link.target = "_blank";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     };
 
     const runGeneration = useCallback(async (item: DesignItem) => {
