@@ -31,7 +31,7 @@ const Upload = ({ onComplete }: UploadProps) => {
 
     const validateFile = (file: File): string | null => {
         if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-            return "Invalid file type. Please upload a JPG or PNG image.";
+            return "Invalid file type. Please upload a JPG, PNG, or WebP image.";
         }
         if (file.size > MAX_FILE_SIZE_BYTES) {
             return "File is too large. Maximum size is 50MB.";
@@ -151,7 +151,7 @@ const Upload = ({ onComplete }: UploadProps) => {
                     <input
                         type="file"
                         className="drop-input"
-                        accept=".jpg, .jpeg, .png, webp"
+                        accept=".jpg, .jpeg, .png, .webp"
                         disabled={!isSignedIn}
                         onChange={handleChange}
                     />

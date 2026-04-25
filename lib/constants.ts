@@ -25,7 +25,7 @@ export const UNAUTHORIZED_STATUSES = [401, 403];
 export const IMAGE_RENDER_DIMENSION = 1024;
 
 // File Upload Constraints
-export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/jpg'];
+export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
 export const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50MB
 
 export const VOLUMA_RENDER_PROMPT = `
