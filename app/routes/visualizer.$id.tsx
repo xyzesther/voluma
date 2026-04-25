@@ -29,7 +29,7 @@ const VisualizerId = () => {
 
         const link = document.createElement('a');
         link.href = currentImage;
-        link.download = `voluma-render-${id || design}.png`;
+        link.download = `voluma-render-${id || 'design'}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
