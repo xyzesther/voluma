@@ -71,8 +71,8 @@ export default function Home() {
           <Navbar />
           <section className="hero">
               <div className="announce">
-                  <div className="dot">
-                      <div className="pulse"></div>
+                  <div className="announce-dot">
+                      <div className="announce-pulse"></div>
                   </div>
 
                   <p>Introducing Voluma 2.0</p>
