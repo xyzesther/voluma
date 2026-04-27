@@ -16,7 +16,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
     const navigate = useNavigate();
-    const { userId, userName } = useOutletContext<AuthContext>();
+    const { userId, userName, isSignedIn } = useOutletContext<AuthContext>();
     const [projects, setProjects] = useState<DesignItem[]>([]);
     const isCreatingProjectRef = useRef(false);
 
@@ -61,14 +61,15 @@ export default function Home() {
     }
 
     useEffect(() => {
+        if (!isSignedIn || !userId) return;
+
         const fetchProjects = async () => {
             const items = await getProjects();
-
             setProjects(items);
         }
 
         fetchProjects();
-    }, []);
+    }, [isSignedIn, userId]);
   return (
       <div className="home">
           <Navbar />

@@ -96,7 +96,7 @@ const VisualizerId = () => {
             setIsProcessing(false);
         }
 
-    }, [id, userId]);
+    }, [id, userId, userName]);
 
     useEffect(() => {
         let isMounted = true;
