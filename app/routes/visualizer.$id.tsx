@@ -147,7 +147,7 @@ const VisualizerId = () => {
     return (
         <div className="visualizer">
             <nav className="topbar">
-                <div className="brand">
+                <div className="brand" onClick={handleBack} style={{ cursor: 'pointer' }}>
                     <Box className="logo" />
 
                     <span className="name">Voluma</span>
