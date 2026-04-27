@@ -197,7 +197,7 @@ const VisualizerId = () => {
                     </div>
                 </div>
 
-                <div className="panel-compare">
+                <div className="panel compare">
                     <div className="panel-header">
                         <div className="panel-meta">
                             <p>Comparison</p>
