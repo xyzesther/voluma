@@ -111,7 +111,7 @@ export default function Home() {
               </div>
           </section>
 
-          <section className="projects">
+          <section className="projects" id="projects">
               <div className="section-inner">
                   <div className="section-head">
                       <div className="copy">
