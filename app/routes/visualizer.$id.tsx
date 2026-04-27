@@ -3,14 +3,14 @@ import { useNavigate, useParams, useOutletContext, useLocation } from 'react-rou
 import { generate3DView } from '../../lib/ai.action';
 import { X, Box, Share2, Download, RefreshCcw } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { createProject, getProjectById } from '../../lib/puter.action';
+import { createProject, getProjectById, updateProjectVisibility } from '../../lib/puter.action';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 const VisualizerId = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    const { userId } = useOutletContext<AuthContext>();
+    const { userId, userName } = useOutletContext<AuthContext>();
 
     const initialRender = location.state?.initialRender;
 
@@ -20,9 +20,18 @@ const VisualizerId = () => {
     const [isProjectLoading, setIsProjectLoading] = useState(true);
 
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
     const [currentImage, setCurrentImage] = useState<string | null>(initialRender || null);
 
-    const handleBack = () => navigate('/')
+    const handleBack = () => navigate('/');
+
+    const handleShare = async () => {
+        if (!project?.id) return;
+        setIsSharing(true);
+        const updated = await updateProjectVisibility({ id: project.id, isPublic: !project.isPublic });
+        if (updated) setProject(updated);
+        setIsSharing(false);
+    };
 
     const handleExport = async () => {
         if (!currentImage) return;
@@ -70,6 +79,7 @@ const VisualizerId = () => {
                     renderedPath: result.renderedPath,
                     timestamp: Date.now(),
                     ownerId: item.ownerId ?? userId ?? null,
+                    sharedBy: item.sharedBy ?? userName ?? null,
                     isPublic: item.isPublic ?? false
                 }
 
@@ -154,7 +164,11 @@ const VisualizerId = () => {
                         <div className="panel-meta">
                             <p>Project</p>
                             <h2>{project?.name || `Residence ${id}`}</h2>
-                            <p className="note">Created by You</p>
+                            <p className="note">
+                                {project?.ownerId === userId
+                                    ? "Created by You"
+                                    : `Created by ${project?.sharedBy ?? "Community"}`}
+                            </p>
                         </div>
 
                         <div className="panel-actions">
@@ -166,9 +180,12 @@ const VisualizerId = () => {
                             >
                                 <Download className="w-4 h-4 mr-2" /> Export
                             </Button>
-                            <Button size="sm" onClick={() => {}} className="share">
-                                <Share2 className="w-4 h-4 mr-2" /> Share
-                            </Button>
+                            {project?.ownerId === userId && (
+                                <Button size="sm" onClick={handleShare} className="share" disabled={isSharing}>
+                                    <Share2 className="w-4 h-4 mr-2" />
+                                    {project?.isPublic ? "Make Private" : "Share To Community"}
+                                </Button>
+                            )}
                         </div>
                     </div>
 

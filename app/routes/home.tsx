@@ -3,7 +3,7 @@ import Navbar from "../../components/Navbar";
 import { ArrowRight, Clock, Layers, ArrowUpRight, Box } from 'lucide-react';
 import { Button } from "../../components/ui/Button";
 import Upload from "../../components/Upload";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { createProject, getProjects } from "../../lib/puter.action";
 import { useState, useRef, useEffect } from 'react';
 
@@ -16,6 +16,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
     const navigate = useNavigate();
+    const { userId, userName } = useOutletContext<AuthContext>();
     const [projects, setProjects] = useState<DesignItem[]>([]);
     const isCreatingProjectRef = useRef(false);
 
@@ -32,6 +33,8 @@ export default function Home() {
                 sourceImage: base64Data,
                 renderedImage: undefined,
                 timestamp: Date.now(),
+                ownerId: userId ?? null,
+                sharedBy: userName ?? null,
             }
 
             const saved = await createProject({ item: newItem, visibility: 'private' })
@@ -123,13 +126,15 @@ export default function Home() {
 
                   <div className="projects-grid">
                       {projects.map(({id, name, renderedImage, sourceImage,
-                      timestamp}) => (
+                      timestamp, ownerId, isPublic, sharedBy}) => (
                           <div key={id} className="project-card group" onClick={() => navigate(`/visualizer/${id}`)}>
                               <div className="preview">
                                   <img src={renderedImage || sourceImage} alt="Project"/>
-                                  <div className="badge">
-                                      <span>Community</span>
-                                  </div>
+                                  {isPublic && (
+                                      <div className="badge">
+                                          <span>Community</span>
+                                      </div>
+                                  )}
                               </div>
 
                               <div className="card-body">
@@ -138,7 +143,7 @@ export default function Home() {
                                       <div className="meta">
                                           <Clock size={12}/>
                                           <span suppressHydrationWarning>{new Date(timestamp).toLocaleDateString()}</span>
-                                          <span>By XYZ</span>
+                                          <span>{ownerId === userId ? "By You" : `By ${sharedBy ?? "Community"}`}</span>
                                       </div>
                                   </div>
                                   <div className="arrow">

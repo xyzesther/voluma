@@ -67,7 +67,7 @@ export const createProject = async ({ item, visibility = "private" } : CreatePro
         const response = await puter.workers.exec(`${PUTER_WORKER_URL}/api/projects/save`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ project: payload, visibility: "public" }),
+            body: JSON.stringify({ project: payload, visibility }),
         });
 
         if (!response.ok) {
@@ -84,6 +84,23 @@ export const createProject = async ({ item, visibility = "private" } : CreatePro
         return null;
     }
 }
+
+export const updateProjectVisibility = async ({ id, isPublic }: { id: string; isPublic: boolean }): Promise<DesignItem | null> => {
+    if (!PUTER_WORKER_URL) return null;
+    try {
+        const response = await puter.workers.exec(`${PUTER_WORKER_URL}/api/projects/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, isPublic }),
+        });
+        if (!response.ok) return null;
+        const data = (await response.json()) as { project?: DesignItem | null };
+        return data?.project ?? null;
+    } catch (error) {
+        console.error(`Failed to update project visibility: ${error}`);
+        return null;
+    }
+};
 
 export const getProjects = async () => {
     if (!PUTER_WORKER_URL) {
