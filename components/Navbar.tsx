@@ -31,11 +31,10 @@ const Navbar = () => {
                         </span>
                     </div>
                     <ul className="links">
-                        <a href="#">Product</a>
-                        <a href="#">Pricing</a>
-                        <a href="#">Community</a>
-                        <a href="#">Enterprise</a>
-                    </ul>
++                       <li>
++                           <a href="/#projects">Community Projects</a>
++                       </li>
++                   </ul>
                 </div>
                 <div className="actions">
                     {isSignedIn ? (
