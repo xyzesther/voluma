@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate, useParams, useOutletContext, useLocation } from 'react-router';
 import { generate3DView } from '../../lib/ai.action';
 import { X, Box, Share2, Download, RefreshCcw } from 'lucide-react';
-import { Button } from '../../components/ui/button';
+import { Button } from '../../components/ui/Button';
 import { createProject, getProjectById, updateProjectVisibility } from '../../lib/puter.action';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
@@ -232,7 +232,7 @@ const VisualizerId = () => {
                                     <ReactCompareSliderImage src={project?.sourceImage} alt="Before" className="compare-img"/>
                                 }
                                 itemTwo={
-                                    <ReactCompareSliderImage src={currentImage || project?.renderedImage} alt="After" className="compare-img"/>
+                                    <ReactCompareSliderImage src={currentImage ?? project?.renderedImage ?? undefined} alt="After" className="compare-img"/>
                                 }
                             />
                         ) : (
