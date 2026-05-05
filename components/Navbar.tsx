@@ -31,10 +31,10 @@ const Navbar = () => {
                         </span>
                     </div>
                     <ul className="links">
-+                       <li>
-+                           <a href="/#projects">Community Projects</a>
-+                       </li>
-+                   </ul>
+                        <li>
+                            <a href="/#projects">Community Projects</a>
+                        </li>
+                    </ul>
                 </div>
                 <div className="actions">
                     {isSignedIn ? (

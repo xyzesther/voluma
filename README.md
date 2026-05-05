@@ -1,5 +1,7 @@
 # Voluma
 
+![Demo](public/demo.gif)
+
 An AI-powered architectural visualization tool that transforms 2D floor plans into photorealistic top-down 3D renders.
 
 ## What It Does
